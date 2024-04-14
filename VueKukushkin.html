@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>To-do List App</title>
+  <style>
+    body {
+            background-color: rgb(208, 250, 236);
+        }
+        #to-doList {
+          width: 600px;
+          background-color: rgb(255, 255, 255);
+          margin: 0 auto;
+          font-size: 20px;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .buttons-container {
+          display: flex;
+          justify-content: center;
+        }
+        .btn-cancel{
+           display: block;
+           bottom: 5px;
+           font-size: 18px;
+           color: #000000;
+           background-color: #ff4040;
+           border: 2px solid #000000;
+           letter-spacing: 2px;
+           text-align: center;
+           position: relative;
+           transition: all .35s;
+        }
+        .btn-add{
+           display: block;
+           bottom: 5px;
+           font-size: 18px;
+           color: #000000;
+           background-color: rgb(219, 219, 219);
+           border: 2px solid #000000;
+           letter-spacing: 2px;
+           text-align: center;
+           position: relative;
+           transition: all .35s;
+        }
+        .btn-primary {
+          color: rgb(0, 0, 0);
+          background-color: rgb(127, 127, 247);
+        }
+
+    .hidden {
+        display: none;
+    }
+    .btn[disabled] {
+        background: #8795a1;
+    }
+    .strikeout {
+        text-decoration: line-through;
+        color: #b8c2cc;
+    }
+    .strikeout:hover {
+    color: #8795a1;
+    }
+    .add-affair-form .input-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    }
+    .checkbox-container {
+    margin-top: 10px;
+    }
+    .textInput{
+    width: 470px;
+    }
+    .priority {
+    color: orange;
+    }
+    li {
+  list-style-type: none;
+  counter-reset: item;
+}
+  </style>
+</head>
+
+<body>
+  <div id="to-doList">
+    <div class="header">
+      <h1>{{ header || 'Welcome' }}</h1>
+      <div class="buttons-container">
+        <button v-if="editing"
+         @click="doEdit(false)"
+          class="btn btn-cancel">
+          Отмена
+        </button>
+        <button 
+        v-else @click="doEdit(true)"
+         class="btn btn-add">
+         Добавить дело
+        </button>
+      </div>
+    </div>
+    <div class="add-affair-form" :class="{ hidden: !editing }">
+      <input class="textInput"
+       @keyup.enter="saveAffair"
+       v-model="NewAffair" 
+       type="text" 
+       placeholder="Добавить дело" />
+      <button 
+       v-bind:disabled="NewAffair.length === 0"
+       @click="saveAffair" 
+       class="btn btn-primary"> 
+       Сохранить дело 
+      </button>
+      <label>
+        <input type="checkbox" v-model="newAffairHighPriority">
+        Высокий приоритет
+    </label>
+    </div>
+    <p v-if="affairs.length === 0">Отлично, ты завершил все дела на сегодня!</p>
+    <ul>
+        <li 
+         v-for="affair in affairs"
+         @click="toogleDone(affair)"
+         :key="affair.id" 
+         :class="{strikeout: affair.done, priority: affair.highPriority}" 
+         class="static-class" >
+         {{ affair.id }}. {{ affair.label }} 
+        </li>
+    </ul>
+  </div>
+
+  <script src="https://unpkg.com/vue@3"></script>
+  <script>
+    const shoppingList = Vue.createApp({
+      data() {
+        return {
+          header: "Список дел",
+          editing: false,
+          NewAffair: '',
+          newAffairHighPriority: false,
+          affairs: [
+             {id: 1, label:"Написать список дел", done: true, highPriority: false},
+             {id: 2, label:"Сделать усталый вид", done: true},
+             {id: 3, label:"Спать", done: false, highPriority: true}
+          ]
+        }
+      },
+      methods: {
+        saveAffair() {
+          this.affairs.push({ 
+            id: this.affairs.length + 1, 
+            label: this.NewAffair, 
+            highPriority: this.newAffairHighPriority
+        })
+          this.NewAffair = ""
+          this.editing = false
+          highPriority: this.newAffairHighPriority = ""
+        },
+        doEdit(editing) {
+          this.editing = editing
+          this.NewAffair = ""
+          this.newAffairHighPriority = ""
+        },
+        toogleDone(affair){
+            affair.done = !affair.done
+        }
+      }
+    }).mount('#to-doList');
+  </script>
+</body>
+
+</html>
